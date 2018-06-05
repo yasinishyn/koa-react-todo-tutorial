@@ -11,7 +11,7 @@ type Todo {
 }
 type Query {
   todo(
-    id: Int
+    id: String
   ): Todo
   todos: [Todo]
 }
