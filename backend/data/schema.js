@@ -15,6 +15,11 @@ type Query {
   ): Todo
   todos: [Todo]
 }
+type Mutation {
+  addTodo (
+    description: String
+  ): Todo
+}
 `;
 
 const schema = makeExecutableSchema({ typeDefs, resolvers });

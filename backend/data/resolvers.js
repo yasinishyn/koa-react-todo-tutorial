@@ -9,6 +9,12 @@ const resolvers = {
       return Todo.find({});
     }
   },
+  Mutation: {
+    addTodo(root, args) {
+      const newTodo = new Todo(args)
+      return newTodo.save()
+    }
+  }
 };
 
 export default resolvers;
