@@ -2,8 +2,18 @@ import { makeExecutableSchema, addMockFunctionsToSchema } from 'graphql-tools';
 import mocks from './mocks';
 
 const typeDefs = `
+type Todo {
+  id: Int
+  description: String
+  done: Boolean
+  createdAt: String
+  updatedAt: String
+}
 type Query {
-  testString: String
+  todo(
+    id: Int
+  ): Todo
+  todos: [Todo]
 }
 `;
 
