@@ -1,8 +1,7 @@
-
 import React, { Component } from 'react'
 import 'bulma/css/bulma.css'
-import { connect } from 'react-redux'
-import { addTodo, toggleTodo, deleteTodo, fetchTodos } from './actions/todos';
+import { graphql } from 'react-apollo'
+import gql from 'graphql-tag'
 
 const Todo = ({ todo, id, onDelete, onToggle }) => (
   <div className="box todo-item level is-mobile">
@@ -21,10 +20,6 @@ const Todo = ({ todo, id, onDelete, onToggle }) => (
 class Todos extends Component {
   state = { newTodo: '' }
 
-  componentDidMount() {
-    this.props.fetchTodos()
-  }
-
   addTodo (event) {
     event.preventDefault() // Prevent form from reloading page
     const { newTodo } = this.state
@@ -36,9 +31,19 @@ class Todos extends Component {
     }
   }
 
+  deleteTodo () {
+
+  }
+
+  toggleTodo () {
+
+  }
+
   render() {
     let { newTodo } = this.state
-    const { todos, isLoading, isSaving, error, deleteTodo, toggleTodo } = this.props
+    let { todos } = this.props.data
+
+    todos = todos || [];
 
     const total = todos.length
     const complete = todos.filter((todo) => todo.done).length
@@ -47,7 +52,6 @@ class Todos extends Component {
     return (
       <section className="section full-column">
         <h1 className="title white">Todos</h1>
-        <div className="error">{error}</div>
 
         <form className="form" onSubmit={this.addTodo.bind(this)}>
           <div className="field has-addons" style={{ justifyContent: 'center' }}>
@@ -57,20 +61,16 @@ class Todos extends Component {
                      placeholder="New todo"
                      onChange={(e) => this.setState({ newTodo: e.target.value })}/>
             </div>
-
-            <div className="control">
-              <button className={`button is-success ${(isLoading || isSaving) && "is-loading"}`}
-                      disabled={isLoading || isSaving}>Add</button>
-            </div>
           </div>
         </form>
 
         <div className="container todo-list">
-          {todos.map((todo) => <Todo key={todo._id}
-                                     id={todo._id}
-                                     todo={todo}
-                                     onDelete={() => deleteTodo(todo._id)}
-                                     onToggle={() => toggleTodo(todo._id)}/> )}
+          { todos &&
+            todos.map((todo) => <Todo key={todo.id}
+                                      id={todo.id}
+                                      todo={todo}
+                                      onDelete={() => this.deleteTodo(todo._id)}
+                                      onToggle={() => this.toggleTodo(todo._id)}/> )}
           <div className="white">
             Total: {total}  , Complete: {complete} , Incomplete: {incomplete}
           </div>
@@ -80,20 +80,11 @@ class Todos extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    todos: state.todos.items,
-    isLoading: state.todos.loading,
-    isSaving: state.todos.saving,
-    error: state.todos.error
+export default graphql(gql`
+  query TodoAppQuery {
+    todos {
+      id
+      description
+    }
   }
-}
-
-const mapDispatchToProps = {
-  addTodo,
-  toggleTodo,
-  deleteTodo,
-  fetchTodos
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Todos)
+`)(Todos);
