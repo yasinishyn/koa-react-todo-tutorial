@@ -19,6 +19,14 @@ type Mutation {
   addTodo (
     description: String
   ): Todo
+  removeTodo (
+    id: String
+  ): Todo
+  updateTodo (
+    id: String
+    description: String
+    done: Boolean
+  ): Todo
 }
 `;
 

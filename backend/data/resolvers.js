@@ -10,10 +10,20 @@ const resolvers = {
     }
   },
   Mutation: {
-    addTodo(root, args) {
+    addTodo(_, args) {
       const newTodo = new Todo(args)
       return newTodo.save()
-    }
+    },
+    async removeTodo(_, args) {
+      const todo = await Todo.findById(args.id);
+      return todo.remove()
+    },
+    async updateTodo(_, args) {
+      const todo = await Todo.findById(args.id)
+      todo.done = args.done || todo.done
+      todo.description = args.description || todo.description
+      return todo.save()
+    },
   }
 };
 
